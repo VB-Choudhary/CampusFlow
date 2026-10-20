@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusFlow — Login</title>
+  <meta name="description" content="CampusFlow: University leave-approval and QR gate-pass management. Log in to access your role dashboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── Login-page specific layout ── */
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--cf-sp-6);
+    }
+
+    .cf-login-wrap {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Brand */
+    .cf-login-brand {
+      text-align: center;
+      margin-bottom: var(--cf-sp-8);
+    }
+    .cf-login-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--cf-primary), var(--cf-primary-dark));
+      border-radius: 18px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: var(--cf-sp-4);
+      box-shadow: 0 8px 32px rgba(37,99,235,0.4);
+    }
+    .cf-login-brand-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      margin: 0 0 var(--cf-sp-1);
+    }
+    .cf-login-brand-title span {
+      color: var(--cf-primary-light, #60a5fa);
+    }
+    .cf-login-brand-sub {
+      font-size: var(--cf-fs-sm);
+      color: rgba(255,255,255,0.55);
+      margin: 0;
+    }
+
+    /* Card */
+    .cf-login-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--cf-radius-xl);
+      padding: var(--cf-sp-8);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+
+    .cf-login-card h2 {
+      font-size: var(--cf-fs-lg);
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 var(--cf-sp-2);
+    }
+    .cf-login-card > p {
+      font-size: var(--cf-fs-sm);
+      color: rgba(255,255,255,0.5);
+      margin: 0 0 var(--cf-sp-6);
+    }
+
+    /* Form elements inside dark card */
+    .cf-login-card .cf-label {
+      color: rgba(255,255,255,0.75);
+    }
+    .cf-login-card .cf-input {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+    .cf-login-card .cf-input::placeholder { color: rgba(255,255,255,0.3); }
+    .cf-login-card .cf-input:focus {
+      background: rgba(255,255,255,0.12);
+      border-color: var(--cf-primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.3);
+    }
+
+    /* Error message */
+    #cf-login-error {
+      display: none;
+      align-items: center;
+      gap: var(--cf-sp-2);
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.4);
+      border-radius: var(--cf-radius);
+      padding: var(--cf-sp-3) var(--cf-sp-4);
+      font-size: var(--cf-fs-sm);
+      color: #FCA5A5;
+      margin-bottom: var(--cf-sp-5);
+    }
+    #cf-login-error.visible { display: flex; }
+
+    /* Login button */
+    .cf-login-btn {
+      width: 100%;
+      padding: var(--cf-sp-3) var(--cf-sp-4);
+      font-size: var(--cf-fs-base);
+      font-weight: 700;
+      border-radius: var(--cf-radius);
+      background: var(--cf-primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+    }
+    .cf-login-btn:hover { background: var(--cf-primary-dark); box-shadow: 0 6px 20px rgba(37,99,235,0.5); }
+    .cf-login-btn:active { transform: scale(0.98); }
+    .cf-login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Demo credentials panel */
+    .cf-demo-panel {
+      margin-top: var(--cf-sp-6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--cf-radius-lg);
+      overflow: hidden;
+    }
+    .cf-demo-panel summary {
+      padding: var(--cf-sp-3) var(--cf-sp-4);
+      cursor: pointer;
+      font-size: var(--cf-fs-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.45);
+      display: flex;
+      align-items: center;
+      gap: var(--cf-sp-2);
+      list-style: none;
+      user-select: none;
+    }
+    .cf-demo-panel summary:hover { color: rgba(255,255,255,0.7); }
+    .cf-demo-panel summary::-webkit-details-marker { display: none; }
+    .cf-demo-creds {
+      padding: 0 var(--cf-sp-4) var(--cf-sp-4);
+    }
+    .cf-cred-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--cf-sp-2) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      gap: var(--cf-sp-3);
+    }
+    .cf-cred-row:last-child { border-bottom: none; }
+    .cf-cred-label {
+      font-size: var(--cf-fs-xs);
+      font-weight: 600;
+      color: rgba(255,255,255,0.55);
+      min-width: 90px;
+    }
+    .cf-cred-val {
+      font-size: var(--cf-fs-xs);
+      color: rgba(255,255,255,0.75);
+      font-family: 'Courier New', monospace;
+    }
+    .cf-cred-fill {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .cf-cred-fill:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* Demo notice */
+    .cf-demo-notice {
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      margin-top: var(--cf-sp-6);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cf-login-wrap">
+
+    <!-- Brand -->
+    <div class="cf-login-brand">
+      <div class="cf-login-logo">CF</div>
+      <h1 class="cf-login-brand-title">Campus<span>Flow</span></h1>
+      <p class="cf-login-brand-sub">University Leave &amp; Gate-Pass Management System</p>
+    </div>
+
+    <!-- Login card -->
+    <div class="cf-login-card">
+      <h2>Sign in to your dashboard</h2>
+      <p>Enter your role credentials to continue.</p>
+
+      <!-- Error banner -->
+      <div id="cf-login-error" role="alert" aria-live="polite">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="cf-login-error-text">Invalid username or password.</span>
+      </div>
+
+      <!-- Form -->
+      <form id="cf-login-form" novalidate autocomplete="off">
+        <div class="cf-form-group">
+          <label class="cf-label" for="cf-username">Username</label>
+          <input class="cf-input" type="text" id="cf-username"
+                 placeholder="e.g. student, warden, dean…"
+                 autocomplete="username" autocorrect="off" autocapitalize="none"
+                 required aria-required="true">
+        </div>
+
+        <div class="cf-form-group" style="margin-top:var(--cf-sp-4)">
+          <label class="cf-label" for="cf-password">Password</label>
+          <input class="cf-input" type="password" id="cf-password"
+                 placeholder="Enter password"
+                 autocomplete="current-password"
+                 required aria-required="true">
+        </div>
+
+        <button class="cf-login-btn" id="cf-login-btn" type="submit" style="margin-top:var(--cf-sp-6)">
+          Sign in
+        </button>
+      </form>
+
+      <!-- Demo credentials panel -->
+      <details class="cf-demo-panel" id="cf-demo-panel">
+        <summary>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+          Demo Credentials (click to expand)
+        </summary>
+        <div class="cf-demo-creds" id="cf-demo-creds-list"></div>
+      </details>
+    </div>
+
+    <!-- Demo notice -->
+    <p class="cf-demo-notice">
+      ⚠️ Simulated frontend demonstration — no real authentication, no server,<br>
+      no emails sent. Data is stored in browser localStorage only.
+    </p>
+
+  </div>
+
+  <div id="cf-toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/toast.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* If already logged in, skip straight to dashboard */
+      CFAuth.redirectIfLoggedIn();
+
+      var ROLE_COLORS = {
+        student:  '#6D28D9',
+        warden:   '#0369A1',
+        dean:     '#065F46',
+        vani:     '#9D174D',
+        security: '#92400E'
+      };
+
+      /* Build demo credentials quick-fill list */
+      var credsList = document.getElementById('cf-demo-creds-list');
+      var ROLE_LABELS = { student: 'Student', warden: 'Warden', dean: 'Dean / Dept.', vani: 'Vani Mandir', security: 'Security' };
+      CFAuth.DEMO_USERS.forEach(function (u) {
+        var row = document.createElement('div');
+        row.className = 'cf-cred-row';
+        row.innerHTML =
+          '<span class="cf-cred-label">' + (ROLE_LABELS[u.role] || u.role) + '</span>' +
+          '<span class="cf-cred-val">' + u.username + ' / ' + u.password + '</span>' +
+          '<button class="cf-cred-fill" type="button" data-user="' + u.username + '" data-pass="' + u.password + '">Fill</button>';
+        credsList.appendChild(row);
+      });
+
+      credsList.querySelectorAll('.cf-cred-fill').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.getElementById('cf-username').value = btn.getAttribute('data-user');
+          document.getElementById('cf-password').value = btn.getAttribute('data-pass');
+          hideError();
+          document.getElementById('cf-login-btn').focus();
+        });
+      });
+
+      /* Form submit */
+      document.getElementById('cf-login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var username = document.getElementById('cf-username').value;
+        var password = document.getElementById('cf-password').value;
+
+        if (!username.trim()) { showError('Please enter your username.'); return; }
+        if (!password)        { showError('Please enter your password.'); return; }
+
+        var btn = document.getElementById('cf-login-btn');
+        btn.disabled = true;
+        btn.textContent = 'Signing in…';
+
+        setTimeout(function () {   /* tiny delay for UX realism */
+          var result = CFAuth.login(username, password);
+          if (result.success) {
+            btn.textContent = 'Redirecting…';
+            window.location.href = result.user.href;
+          } else {
+            showError('Invalid username or password. Check the demo credentials below.');
+            btn.disabled = false;
+            btn.textContent = 'Sign in';
+          }
+        }, 350);
+      });
+
+      function showError(msg) {
+        var err = document.getElementById('cf-login-error');
+        document.getElementById('cf-login-error-text').textContent = msg;
+        err.classList.add('visible');
+        err.setAttribute('aria-hidden', 'false');
+      }
+      function hideError() {
+        var err = document.getElementById('cf-login-error');
+        err.classList.remove('visible');
+        err.setAttribute('aria-hidden', 'true');
+      }
+    })();
+  </script>
+</body>
+</html>

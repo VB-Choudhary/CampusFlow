@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard — CampusFlow</title>
+  <meta name="description" content="Student dashboard for CampusFlow. Apply for Normal or Vacation Leave, upload your physical application, verify OCR-extracted data, and track approval status.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div id="cf-nav-placeholder"></div>
+
+  <main class="cf-page" id="cf-student-page" role="main">
+
+    <!-- Page Header -->
+    <header class="cf-page__header cf-fade-up">
+      <h1 class="cf-page__title">Student Dashboard</h1>
+      <p class="cf-page__subtitle">Apply for leave and track your application status in real time.</p>
+    </header>
+
+    <!-- Stats Row -->
+    <div class="cf-grid-4 cf-section cf-fade-up cf-fade-up--delay-1" id="cf-student-stats" role="region" aria-label="Leave statistics">
+      <!-- Injected by student.js -->
+    </div>
+
+    <!-- Two-column layout: new application form + history -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--cf-sp-6);align-items:start" id="cf-student-layout">
+
+      <!-- Left: New Leave Application -->
+      <div class="cf-fade-up cf-fade-up--delay-2">
+        <section class="cf-card" aria-labelledby="new-leave-heading">
+          <div class="cf-card__header">
+            <i data-lucide="file-plus" style="width:20px;height:20px;color:var(--cf-primary)"></i>
+            <h2 class="cf-card__title" id="new-leave-heading">New Leave Application</h2>
+          </div>
+          <div class="cf-card__body">
+
+            <!-- Step 1: Upload & OCR -->
+            <div id="cf-upload-step">
+              <div class="cf-alert cf-alert--info" style="margin-bottom:var(--cf-sp-4)">
+                <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0"></i>
+                <span>Upload a photo of your <strong>physical leave application</strong> signed by your parent. Our system will extract the fields automatically.</span>
+              </div>
+
+              <div class="cf-upload-area" id="cf-upload-area" role="button" tabindex="0"
+                   aria-label="Click to upload leave application image">
+                <div class="cf-upload-area__icon">
+                  <i data-lucide="upload-cloud" style="width:40px;height:40px"></i>
+                </div>
+                <div class="cf-upload-area__text">Click to upload or drag & drop</div>
+                <div class="cf-upload-area__sub">JPG, PNG, PDF — max 10 MB</div>
+              </div>
+              <input type="file" id="cf-file-input" accept="image/*,.pdf" class="sr-only"
+                     aria-label="Select leave application file">
+
+              <div class="mt-4" style="text-align:center">
+                <button class="cf-btn cf-btn--ghost cf-btn--sm" id="cf-skip-upload-btn" type="button">
+                  Fill form manually without uploading
+                </button>
+              </div>
+            </div>
+
+            <!-- OCR Preview -->
+            <div id="cf-ocr-step" class="hidden">
+              <div class="cf-ocr-panel">
+                <div class="cf-ocr-banner">
+                  <i data-lucide="scan" style="width:16px;height:16px;flex-shrink:0"></i>
+                  <span id="cf-ocr-msg">Scanning application image…</span>
+                </div>
+                <img id="cf-ocr-preview" class="cf-ocr-preview" src="" alt="Uploaded application">
+                <div class="cf-ocr-scanning" id="cf-ocr-scanning-indicator">
+                  <div class="cf-spinner cf-spinner--sm"></div>
+                  <span>Extracting fields with OCR…</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Application Form -->
+            <form id="cf-leave-form" class="hidden" novalidate aria-label="Leave application form">
+
+              <div class="cf-alert cf-alert--info" id="cf-ocr-review-banner" style="margin-bottom:var(--cf-sp-5)">
+                <i data-lucide="check-circle" style="width:16px;height:16px;flex-shrink:0"></i>
+                <span>Fields pre-filled from your application. <strong>Please verify all details before submitting.</strong></span>
+              </div>
+
+              <!-- Student Info -->
+              <fieldset style="border:none;margin:0 0 var(--cf-sp-5)">
+                <legend style="font-size:var(--cf-fs-xs);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cf-text-3);margin-bottom:var(--cf-sp-3)">Student Information</legend>
+                <div class="cf-grid-2" style="gap:var(--cf-cf-sp-3)">
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-name">Full Name <span class="required">*</span></label>
+                    <input class="cf-input" type="text" id="cf-f-name" placeholder="Your full name" required>
+                  </div>
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-roll">Roll No. <span class="required">*</span></label>
+                    <input class="cf-input" type="text" id="cf-f-roll" placeholder="21CS101" required>
+                  </div>
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-hostel">Hostel & Room</label>
+                    <input class="cf-input" type="text" id="cf-f-hostel" placeholder="Block A – Room 101">
+                  </div>
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-contact">Contact No.</label>
+                    <input class="cf-input" type="tel" id="cf-f-contact" placeholder="9876543210">
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Parent Info -->
+              <fieldset style="border:none;margin:0 0 var(--cf-sp-5)">
+                <legend style="font-size:var(--cf-fs-xs);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cf-text-3);margin-bottom:var(--cf-sp-3)">Parent / Guardian</legend>
+                <div class="cf-grid-2">
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-pname">Parent Name <span class="required">*</span></label>
+                    <input class="cf-input" type="text" id="cf-f-pname" placeholder="Parent's full name" required>
+                  </div>
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-pphone">Parent Phone</label>
+                    <input class="cf-input" type="tel" id="cf-f-pphone" placeholder="9876543200">
+                  </div>
+                  <div class="cf-form-group" style="grid-column:span 2">
+                    <label class="cf-label" for="cf-f-pemail">Parent Email <span class="required">*</span></label>
+                    <input class="cf-input" type="email" id="cf-f-pemail" placeholder="parent@example.com" required>
+                    <span class="cf-form-hint">An approval link will be simulated to this address.</span>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Leave Details -->
+              <fieldset style="border:none;margin:0 0 var(--cf-sp-5)">
+                <legend style="font-size:var(--cf-fs-xs);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cf-text-3);margin-bottom:var(--cf-sp-3)">Leave Details</legend>
+                <div class="cf-form-group" style="margin-bottom:var(--cf-sp-3)">
+                  <label class="cf-label" for="cf-f-type">Leave Type <span class="required">*</span></label>
+                  <select class="cf-select" id="cf-f-type" required>
+                    <option value="">Select type…</option>
+                    <option value="normal">Normal Leave (requires Dean approval)</option>
+                    <option value="vacation">Vacation Leave (Dean approval bypassed)</option>
+                  </select>
+                </div>
+                <div class="cf-grid-2" style="margin-bottom:var(--cf-sp-3)">
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-from">From Date <span class="required">*</span></label>
+                    <input class="cf-input" type="date" id="cf-f-from" required>
+                  </div>
+                  <div class="cf-form-group">
+                    <label class="cf-label" for="cf-f-to">To Date <span class="required">*</span></label>
+                    <input class="cf-input" type="date" id="cf-f-to" required>
+                  </div>
+                </div>
+                <div class="cf-form-group" style="margin-bottom:var(--cf-sp-3)">
+                  <label class="cf-label" for="cf-f-dest">Destination <span class="required">*</span></label>
+                  <input class="cf-input" type="text" id="cf-f-dest" placeholder="City, State" required>
+                </div>
+                <div class="cf-form-group">
+                  <label class="cf-label" for="cf-f-reason">Reason <span class="required">*</span></label>
+                  <textarea class="cf-textarea" id="cf-f-reason" placeholder="Describe the purpose of your leave…" required></textarea>
+                </div>
+              </fieldset>
+
+              <!-- Parent Email Preview -->
+              <div class="cf-form-group" style="margin-bottom:var(--cf-sp-5)">
+                <label class="cf-label">Parent Approval Email Preview</label>
+                <div class="cf-email-panel" id="cf-email-preview">
+                  <div class="cf-email-header">
+                    <div class="label">Email to Parent</div>
+                    <div class="cf-email-meta" id="cf-email-to">—</div>
+                  </div>
+                  <div class="cf-email-body" id="cf-email-body">
+                    Fill in the form above to preview the approval email.
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:var(--cf-sp-3);justify-content:flex-end;flex-wrap:wrap">
+                <button type="button" class="cf-btn cf-btn--outline" id="cf-form-back-btn">
+                  <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Back
+                </button>
+                <button type="submit" class="cf-btn cf-btn--primary" id="cf-submit-btn">
+                  <i data-lucide="send" style="width:14px;height:14px"></i> Submit Application
+                </button>
+              </div>
+            </form>
+
+            <!-- Success State -->
+            <div id="cf-submit-success" class="hidden" style="text-align:center;padding:var(--cf-sp-10) 0">
+              <div style="width:64px;height:64px;border-radius:50%;background:#D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto var(--cf-sp-4)">
+                <i data-lucide="check-circle" style="width:32px;height:32px;color:#059669"></i>
+              </div>
+              <h3 style="font-size:var(--cf-fs-lg);font-weight:700;margin-bottom:var(--cf-sp-2)">Application Submitted!</h3>
+              <p style="color:var(--cf-text-2);font-size:var(--cf-fs-sm);margin-bottom:var(--cf-sp-5)">
+                A simulated approval email has been sent to your parent. Track the status in your leave history below.
+              </p>
+              <button class="cf-btn cf-btn--primary" id="cf-new-app-btn" type="button">
+                Submit Another Application
+              </button>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- Right: Leave History + Parent Email Simulation -->
+      <div class="cf-fade-up cf-fade-up--delay-3">
+
+        <!-- Parent Email Simulation -->
+        <section class="cf-card" style="margin-bottom:var(--cf-sp-5)" aria-labelledby="parent-sim-heading">
+          <div class="cf-card__header">
+            <i data-lucide="mail" style="width:20px;height:20px;color:var(--cf-pending)"></i>
+            <h2 class="cf-card__title" id="parent-sim-heading">Simulated Parent Email Approval</h2>
+          </div>
+          <div class="cf-card__body">
+            <p style="font-size:var(--cf-fs-sm);color:var(--cf-text-2);margin-bottom:var(--cf-sp-4)">
+              In a real system, your parent receives an email with an approval link.
+              Use the controls below to simulate that action for demo purposes.
+            </p>
+            <div class="cf-form-group" style="margin-bottom:var(--cf-sp-3)">
+              <label class="cf-label" for="cf-parent-req-sel">Select Pending Application</label>
+              <select class="cf-select" id="cf-parent-req-sel">
+                <option value="">Choose application…</option>
+              </select>
+            </div>
+            <div id="cf-parent-email-view" class="hidden" style="margin-bottom:var(--cf-sp-4)">
+              <div class="cf-email-panel">
+                <div class="cf-email-header">
+                  <div class="label">Approval Request Email</div>
+                  <div class="cf-email-meta" id="cf-pe-to">—</div>
+                </div>
+                <div class="cf-email-body" id="cf-pe-body">—</div>
+                <div class="cf-email-actions">
+                  <button class="cf-btn cf-btn--success" id="cf-pe-approve-btn" type="button">
+                    <i data-lucide="check" style="width:14px;height:14px"></i> Approve (as Parent)
+                  </button>
+                  <button class="cf-btn cf-btn--danger" id="cf-pe-reject-btn" type="button">
+                    <i data-lucide="x" style="width:14px;height:14px"></i> Reject (as Parent)
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p id="cf-parent-no-pending" class="text-muted text-sm">No applications awaiting parent approval.</p>
+          </div>
+        </section>
+
+        <!-- My Leave History -->
+        <section class="cf-card" aria-labelledby="history-heading">
+          <div class="cf-card__header">
+            <i data-lucide="list" style="width:20px;height:20px;color:var(--cf-primary)"></i>
+            <h2 class="cf-card__title" id="history-heading">My Leave History</h2>
+          </div>
+          <div class="cf-card__body" style="padding:0">
+            <div id="cf-leave-history">
+              <!-- Injected by student.js -->
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Detail Modal -->
+  <div class="cf-modal-overlay" id="cf-detail-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cf-detail-modal-title">
+    <div class="cf-modal cf-modal--wide">
+      <div class="cf-modal__header">
+        <i data-lucide="file-text" style="width:20px;height:20px;color:var(--cf-primary)"></i>
+        <h3 class="cf-modal__title" id="cf-detail-modal-title">Application Details</h3>
+        <button class="cf-modal__close" id="cf-detail-modal-close" aria-label="Close modal">
+          <i data-lucide="x" style="width:16px;height:16px"></i>
+        </button>
+      </div>
+      <div class="cf-modal__body" id="cf-detail-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="cf-toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>CFAuth.requireRole('student');</script>
+  <script src="js/toast.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/student360.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>

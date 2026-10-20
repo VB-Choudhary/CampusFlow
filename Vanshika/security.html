@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Dashboard — CampusFlow</title>
+  <meta name="description" content="Security dashboard for CampusFlow. Validate QR gate-pass tokens and record student exits.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .cf-token-input-wrap {
+      position: relative;
+    }
+    .cf-token-input-wrap input {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding-right: 110px;
+    }
+    .cf-token-input-wrap .cf-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cf-nav-placeholder"></div>
+
+  <main class="cf-page" role="main">
+
+    <header class="cf-page__header cf-fade-up">
+      <h1 class="cf-page__title">Security Dashboard</h1>
+      <p class="cf-page__subtitle">Validate gate-pass tokens and record student campus exits.</p>
+    </header>
+
+    <!-- Stats -->
+    <div class="cf-grid-4 cf-section cf-fade-up cf-fade-up--delay-1" id="cf-security-stats"></div>
+
+    <!-- Token Validator -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-2" style="max-width:680px;margin-left:auto;margin-right:auto" aria-labelledby="security-scan-heading">
+      <div class="cf-card">
+        <div class="cf-card__header">
+          <i data-lucide="scan-line" style="width:20px;height:20px;color:var(--cf-security)"></i>
+          <h2 class="cf-card__title" id="security-scan-heading">Validate Gate Pass Token</h2>
+        </div>
+        <div class="cf-card__body">
+          <div class="cf-alert cf-alert--info" style="margin-bottom:var(--cf-sp-5)">
+            <i data-lucide="info" style="width:16px;height:16px;flex-shrink:0"></i>
+            <span>Enter the token from the student's gate pass or scan the QR code. Token format: <code>CF-L00X-…</code></span>
+          </div>
+
+          <div class="cf-token-input-wrap" style="margin-bottom:var(--cf-sp-4)">
+            <label class="sr-only" for="cf-token-input">Gate pass token</label>
+            <input class="cf-input" type="text" id="cf-token-input"
+                   placeholder="CF-L001-…" autocomplete="off"
+                   aria-label="Enter gate pass token">
+            <button class="cf-btn cf-btn--primary" id="cf-validate-btn" type="button">
+              <i data-lucide="search" style="width:14px;height:14px"></i> Validate
+            </button>
+          </div>
+
+          <!-- Quick-fill from issued passes -->
+          <div id="cf-issued-tokens-quick" style="margin-bottom:var(--cf-sp-4)"></div>
+
+          <!-- Scan Result -->
+          <div id="cf-scan-result" class="hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Exit Log -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-3" aria-labelledby="security-log-heading">
+      <div class="cf-section__header">
+        <h2 class="cf-section__title" id="security-log-heading">
+          <i data-lucide="log-out" style="width:20px;height:20px;color:var(--cf-security)"></i>
+          Exit Log
+        </h2>
+      </div>
+      <div class="cf-card">
+        <div id="cf-exit-log"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="cf-toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>CFAuth.requireRole('security');</script>
+  <script src="js/toast.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/student360.js"></script>
+  <script src="js/security.js"></script>
+</body>
+</html>

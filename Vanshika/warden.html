@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden Dashboard — CampusFlow</title>
+  <meta name="description" content="Warden dashboard for CampusFlow. Review initial and final leave approval queues for hostel residents.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div id="cf-nav-placeholder"></div>
+
+  <main class="cf-page" id="cf-warden-page" role="main">
+
+    <header class="cf-page__header cf-fade-up">
+      <h1 class="cf-page__title">Warden Dashboard</h1>
+      <p class="cf-page__subtitle">Manage initial and final approval queues for leave applications.</p>
+    </header>
+
+    <!-- Stats -->
+    <div class="cf-grid-4 cf-section cf-fade-up cf-fade-up--delay-1" id="cf-warden-stats"></div>
+
+    <!-- Initial Approval Queue -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-2" aria-labelledby="warden-initial-heading">
+      <div class="cf-section__header">
+        <h2 class="cf-section__title" id="warden-initial-heading">
+          <i data-lucide="inbox" style="width:20px;height:20px;color:var(--cf-warden)"></i>
+          Initial Approval Queue
+        </h2>
+        <span class="cf-badge cf-badge--info" id="cf-initial-count">0 pending</span>
+      </div>
+      <div class="cf-card">
+        <div id="cf-initial-queue"></div>
+      </div>
+    </section>
+
+    <!-- Final Approval Queue -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-3" aria-labelledby="warden-final-heading">
+      <div class="cf-section__header">
+        <h2 class="cf-section__title" id="warden-final-heading">
+          <i data-lucide="check-square" style="width:20px;height:20px;color:var(--cf-warden)"></i>
+          Final Approval Queue
+        </h2>
+        <span class="cf-badge cf-badge--info" id="cf-final-count">0 pending</span>
+      </div>
+      <div class="cf-card">
+        <div id="cf-final-queue"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Action Modal -->
+  <div class="cf-modal-overlay" id="cf-warden-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cf-warden-modal-title">
+    <div class="cf-modal">
+      <div class="cf-modal__header">
+        <i data-lucide="shield" style="width:20px;height:20px;color:var(--cf-warden)"></i>
+        <h3 class="cf-modal__title" id="cf-warden-modal-title">Review Application</h3>
+        <button class="cf-modal__close" id="cf-warden-modal-close" aria-label="Close modal">
+          <i data-lucide="x" style="width:16px;height:16px"></i>
+        </button>
+      </div>
+      <div class="cf-modal__body" id="cf-warden-modal-body"></div>
+      <div class="cf-modal__footer">
+        <button class="cf-btn cf-btn--ghost cf-btn--sm" id="cf-warden-view-360">
+          <i data-lucide="user-circle" style="width:14px;height:14px"></i> Student 360°
+        </button>
+        <button class="cf-btn cf-btn--outline" id="cf-warden-modal-cancel">Cancel</button>
+        <button class="cf-btn cf-btn--danger"   id="cf-warden-reject-btn">
+          <i data-lucide="x" style="width:14px;height:14px"></i> Reject
+        </button>
+        <button class="cf-btn cf-btn--success"  id="cf-warden-approve-btn">
+          <i data-lucide="check" style="width:14px;height:14px"></i> Approve
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cf-toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>CFAuth.requireRole('warden');</script>
+  <script src="js/toast.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/student360.js"></script>
+  <script src="js/warden.js"></script>
+</body>
+</html>

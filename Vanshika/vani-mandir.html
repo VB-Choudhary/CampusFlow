@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vani Mandir Dashboard — CampusFlow</title>
+  <meta name="description" content="Vani Mandir dashboard for CampusFlow. Verify student records and issue QR gate-pass tokens.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div id="cf-nav-placeholder"></div>
+
+  <main class="cf-page" role="main">
+
+    <header class="cf-page__header cf-fade-up">
+      <h1 class="cf-page__title">Vani Mandir Dashboard</h1>
+      <p class="cf-page__subtitle">Verify student records and generate QR gate-pass tokens for fully approved applications.</p>
+    </header>
+
+    <!-- Stats -->
+    <div class="cf-grid-4 cf-section cf-fade-up cf-fade-up--delay-1" id="cf-vani-stats"></div>
+
+    <!-- Verification Queue -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-2" aria-labelledby="vani-verify-heading">
+      <div class="cf-section__header">
+        <h2 class="cf-section__title" id="vani-verify-heading">
+          <i data-lucide="clipboard-check" style="width:20px;height:20px;color:var(--cf-vani)"></i>
+          Verification Queue
+        </h2>
+        <span class="cf-badge cf-badge--info" id="cf-verify-count">0 pending</span>
+      </div>
+      <div class="cf-card">
+        <div id="cf-verify-queue"></div>
+      </div>
+    </section>
+
+    <!-- Gate Pass Issuance Queue (Warden Final approved) -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-3" aria-labelledby="vani-gatepass-heading">
+      <div class="cf-section__header">
+        <h2 class="cf-section__title" id="vani-gatepass-heading">
+          <i data-lucide="qr-code" style="width:20px;height:20px;color:var(--cf-vani)"></i>
+          Gate Pass Issuance
+        </h2>
+        <span class="cf-badge cf-badge--purple" id="cf-gp-count">0 ready</span>
+      </div>
+      <div class="cf-card">
+        <div id="cf-gatepass-queue"></div>
+      </div>
+    </section>
+
+    <!-- Issued Gate Passes -->
+    <section class="cf-section cf-fade-up cf-fade-up--delay-4" aria-labelledby="vani-issued-heading">
+      <div class="cf-section__header">
+        <h2 class="cf-section__title" id="vani-issued-heading">
+          <i data-lucide="ticket" style="width:20px;height:20px;color:var(--cf-approved)"></i>
+          Issued Gate Passes
+        </h2>
+      </div>
+      <div class="cf-card">
+        <div id="cf-issued-queue"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Verify Action Modal -->
+  <div class="cf-modal-overlay" id="cf-vani-verify-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cf-vani-verify-title">
+    <div class="cf-modal">
+      <div class="cf-modal__header">
+        <i data-lucide="clipboard-check" style="width:20px;height:20px;color:var(--cf-vani)"></i>
+        <h3 class="cf-modal__title" id="cf-vani-verify-title">Verify Records</h3>
+        <button class="cf-modal__close" id="cf-vani-verify-close" aria-label="Close modal">
+          <i data-lucide="x" style="width:16px;height:16px"></i>
+        </button>
+      </div>
+      <div class="cf-modal__body" id="cf-vani-verify-body"></div>
+      <div class="cf-modal__footer">
+        <button class="cf-btn cf-btn--ghost cf-btn--sm" id="cf-vani-verify-360">
+          <i data-lucide="user-circle" style="width:14px;height:14px"></i> Student 360°
+        </button>
+        <button class="cf-btn cf-btn--outline" id="cf-vani-verify-cancel">Cancel</button>
+        <button class="cf-btn cf-btn--danger"  id="cf-vani-verify-reject">
+          <i data-lucide="x" style="width:14px;height:14px"></i> Reject
+        </button>
+        <button class="cf-btn cf-btn--success" id="cf-vani-verify-approve">
+          <i data-lucide="check" style="width:14px;height:14px"></i> Verify & Approve
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gate Pass QR Modal -->
+  <div class="cf-modal-overlay" id="cf-qr-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cf-qr-modal-title">
+    <div class="cf-modal cf-modal--sm">
+      <div class="cf-modal__header">
+        <i data-lucide="qr-code" style="width:20px;height:20px;color:var(--cf-vani)"></i>
+        <h3 class="cf-modal__title" id="cf-qr-modal-title">Gate Pass Issued</h3>
+        <button class="cf-modal__close" id="cf-qr-modal-close" aria-label="Close modal">
+          <i data-lucide="x" style="width:16px;height:16px"></i>
+        </button>
+      </div>
+      <div class="cf-modal__body" id="cf-qr-modal-body">
+        <div class="cf-qr-box">
+          <div class="cf-qr-code" id="cf-qr-display">
+            <!-- QR placeholder SVG injected by JS -->
+          </div>
+          <div class="cf-gate-token" id="cf-qr-token">—</div>
+          <p style="font-size:var(--cf-fs-xs);color:var(--cf-text-3);margin-top:var(--cf-sp-3)" id="cf-qr-meta">—</p>
+        </div>
+      </div>
+      <div class="cf-modal__footer">
+        <button class="cf-btn cf-btn--primary w-full" id="cf-qr-modal-done">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cf-toast-container" role="status" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>CFAuth.requireRole('vani');</script>
+  <script src="js/toast.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/student360.js"></script>
+  <script src="js/vani-mandir.js"></script>
+</body>
+</html>
